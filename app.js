@@ -164,7 +164,3 @@ app.post("/", function(req, res) {
   }
 });
 
-//intiating the server
-app.listen("1000", function(req, res) {
-  console.log("intiated at 1000");
-});
