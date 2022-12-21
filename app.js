@@ -52,8 +52,8 @@ app.get("/:workItem", (req, res) => {
   ListNames.findOne({
     name: urlTitle
   }, function(err, foundItems) {
-    if (!err) {
-
+    if (!err) 
+    {
       if (!foundItems) {
         const TitleNames = new ListNames({
           name: urlTitle,
@@ -67,11 +67,8 @@ app.get("/:workItem", (req, res) => {
           keyItem: foundItems.listItems
         });
       }
-
     }
   });
-
-
 });
 
 //Getting the default list items
@@ -145,4 +142,3 @@ app.post("/", function(req, res) {
     });
   }
 });
-
