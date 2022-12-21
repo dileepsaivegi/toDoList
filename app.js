@@ -71,27 +71,25 @@ app.get("/:workItem", (req, res) => {
   });
 });
 
+
 //Getting the default list items
+
 app.get("/", function(req, res) {
   Item.find(function(err, items) {
     if (items.length === 0) {
       Item.insertMany(defaultArray, function(err) {
-        if (!err) {
-         res.redirect("/");
+        if (!err) {res.redirect("/");
         }
       });
-    } else {
-      items.forEach(function(items) {
+    }
+     else {
         res.render("list", {
         keyDay: "today",
         keyItem: items
       });
-      
-      });
     }
+      });
   });
-});
-
 
 //Deleting the items from their respective lists
 
@@ -137,4 +135,5 @@ app.post("/delete", function(req, res) {
         }
       });
     }
+
   });
