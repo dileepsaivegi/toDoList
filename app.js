@@ -4,9 +4,6 @@ const mongoose = require("mongoose");
 const _=require("lodash");
 const url = "mongodb+srv://dileepsaivegi:Y49zRWGZUJVy3p9@cluster0.lr5g4.mongodb.net/toDoListDB?retryWrites=true&w=majority";
 mongoose.set('strictQuery', true);
-app.use(express.urlencoded({
-  extend: true
-}));
 app.use(express.static("public"));
 
 app.set("view engine", "ejs");
