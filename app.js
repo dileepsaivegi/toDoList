@@ -5,7 +5,7 @@ const _=require("lodash");
 const url = "mongodb+srv://dileepsaivegi:Y49zRWGZUJVy3p9@cluster0.lr5g4.mongodb.net/toDoListDB?retryWrites=true&w=majority";
 mongoose.set('strictQuery', true);
 app.use(express.static("public"));
-
+app.use(express.urlencoded({extended:true}));
 app.set("view engine", "ejs");
 mongoose.connect(url);
 mongoose.connection;
@@ -48,11 +48,11 @@ app.get('/favicon.ico', (req, res) => res.status(204).end);
 
 //Creating the lists based upon their parameter
 app.get("/:workItem", (req, res) => {
-  const urlTitle = _.lodash(req.params.workItem);
+  const urlTitle = _.lowerCase(req.params.workItem);
   ListNames.findOne({
     name: urlTitle
   }, function(err, foundItems) {
-    if (!err) 
+    if (!err)
     {
       if (!foundItems) {
         const TitleNames = new ListNames({
@@ -62,6 +62,8 @@ app.get("/:workItem", (req, res) => {
         TitleNames.save();
         res.redirect("/" + urlTitle);
       } else {
+
+        //show an existing list
         res.render("list", {
           keyDay: foundItems.name,
           keyItem: foundItems.listItems
@@ -71,11 +73,9 @@ app.get("/:workItem", (req, res) => {
   });
 });
 
-
 //Getting the default list items
-
 app.get("/", function(req, res) {
-  Item.find(function(err, items) {
+  Item.find({},function(err, items) {
     if (items.length === 0) {
       Item.insertMany(defaultArray, function(err) {
         if (!err) {res.redirect("/");
@@ -91,32 +91,30 @@ app.get("/", function(req, res) {
       });
   });
 
-//Deleting the items from their respective lists
 
-app.post("/delete", function(req, res) {
-  const deleteItem = req.body.checkboxed;
-  const deleteRouteItem = req.body.hiddenValue;
-  if (deleteRouteItem === "today") {
-    Item.findByIdAndRemove(deleteItem, function(err) {
-      if (!err) { 
-    ListNames.findOneAndUpdate({
-      name: deleteRouteItem
-    }, {
-      $pull: {
-        listItems: {
-          _id: deleteItem
-        }
-      }
-    }, function(err, foundList) {
-      if (!err) {
-        res.redirect("/" + deleteRouteItem);
+//Inputing the items to thier respective lists using post request
+app.post("/", function(req, res) {
+  const nextItem = req.body.itemValue;
+  const buttonValue = req.body.buttonName;
+  const itemNext = new Item({
+    name: nextItem
+  });
+  if (buttonValue === "today") {
+    itemNext.save();
+    res.redirect("/");
+  } else {
+    ListNames.findOne({name: buttonValue}, function(err, foundList) {
+      if(!err){
+      foundList.listItems.push(itemNext);
+      foundList.save();
+      res.redirect("/" + buttonValue);
       }
     });
   }
 });
 
+//Deleting the items from their respective lists
 
-//Inputing the items to thier respective lists using post request
 app.post("/delete", function(req, res) {
   const deleteItem = req.body.checkboxed;
   const deleteRouteItem = req.body.hiddenValue;
@@ -137,3 +135,9 @@ app.post("/delete", function(req, res) {
     }
 
   });
+
+
+  app.get("/about", function(req, res){
+    res.render("about");
+  });
+
