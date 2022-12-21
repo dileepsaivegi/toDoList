@@ -36,7 +36,7 @@ const item3 = new Item({
   name: "--> Select there to delete Item"
 });
 
-let defaultArray = [item1, item2, item3];
+const defaultArray = [item1, item2, item3];
 
 
 
@@ -48,14 +48,13 @@ app.get('/favicon.ico', (req, res) => res.status(204).end);
 
 //Creating the lists based upon their parameter
 app.get("/:workItem", (req, res) => {
-  let urlTitle = _.lodash(req.params.workItem);
+  const urlTitle = _.lodash(req.params.workItem);
   ListNames.findOne({
     name: urlTitle
   }, function(err, foundItems) {
     if (!err) {
 
       if (!foundItems) {
-        console.log("doesnt exists");
         const TitleNames = new ListNames({
           name: urlTitle,
           listItems: defaultArray
@@ -63,16 +62,12 @@ app.get("/:workItem", (req, res) => {
         TitleNames.save();
         res.redirect("/" + urlTitle);
       } else {
-        console.log("exists");
-
         res.render("list", {
           keyDay: foundItems.name,
           keyItem: foundItems.listItems
         });
       }
 
-    } else {
-      console.log(err);
     }
   });
 
@@ -93,11 +88,11 @@ app.get("/", function(req, res) {
       res.redirect("/");
     } else {
       items.forEach(function(items) {
-        console.log();
-      });
-      res.render("list", {
+        res.render("list", {
         keyDay: "today",
         keyItem: items
+      });
+      
       });
     }
   });
@@ -111,14 +106,7 @@ app.post("/delete", function(req, res) {
   const deleteRouteItem = req.body.hiddenValue;
   if (deleteRouteItem === "today") {
     Item.findByIdAndRemove(deleteItem, function(err) {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log("success");
-      }
-    });
-    res.redirect("/");
-  } else {
+      if (!err) { 
     ListNames.findOneAndUpdate({
       name: deleteRouteItem
     }, {
@@ -130,11 +118,9 @@ app.post("/delete", function(req, res) {
     }, function(err, foundList) {
       if (!err) {
         res.redirect("/" + deleteRouteItem);
-
       }
     });
   }
-
 });
 
 
@@ -153,9 +139,8 @@ app.post("/", function(req, res) {
       name: buttonValue
     }, function(err, foundList) {
 
-      console.log(foundList.listItems);
-      console.log(foundList.listItems.push(itemNext));
-      console.log(foundList.save());
+      foundList.listItems.push(itemNext));
+      foundList.save();
       res.redirect("/" + buttonValue);
     });
   }
