@@ -119,22 +119,22 @@ app.post("/delete", function(req, res) {
 
 
 //Inputing the items to thier respective lists using post request
-app.post("/", function(req, res) {
-  const nextItem = req.body.item;
-  const buttonValue = req.body.buttonName;
-  const itemNext = new Item({
-    name: nextItem
+app.post("/delete", function(req, res) {
+  const deleteItem = req.body.checkboxed;
+  const deleteRouteItem = req.body.hiddenValue;
+  if (deleteRouteItem === "today") {
+    Item.findByIdAndRemove(deleteItem, function(err) {
+      if (!err) {
+              res.redirect("/");
+          }
+      });
+    }
+    else{
+      ListNames.findOneAndUpdate({name: deleteRouteItem}, {
+        $pull: {listItems: {_id: deleteItem}}}, function(err, foundList) {
+        if (!err) {
+          res.redirect("/" + deleteRouteItem);
+        }
+      });
+    }
   });
-  if (buttonValue === "today") {
-    itemNext.save();
-    res.redirect("/");
-  } else {
-    ListNames.findOne({name: buttonValue}, function(err, foundList) {
-      if(!err){
-      foundList.listItems.push(itemNext);
-      foundList.save();
-      res.redirect("/" + buttonValue);
-      }
-    });
-  }
-});
