@@ -76,13 +76,10 @@ app.get("/", function(req, res) {
   Item.find(function(err, items) {
     if (items.length === 0) {
       Item.insertMany(defaultArray, function(err) {
-        if (err) {
-          console.log(err);
-        } else {
-          console.log("default values inserted");
+        if (!err) {
+         res.redirect("/");
         }
       });
-      res.redirect("/");
     } else {
       items.forEach(function(items) {
         res.render("list", {
@@ -132,13 +129,12 @@ app.post("/", function(req, res) {
     itemNext.save();
     res.redirect("/");
   } else {
-    ListNames.findOne({
-      name: buttonValue
-    }, function(err, foundList) {
-
+    ListNames.findOne({name: buttonValue}, function(err, foundList) {
+      if(!err){
       foundList.listItems.push(itemNext);
       foundList.save();
       res.redirect("/" + buttonValue);
+      }
     });
   }
 });
