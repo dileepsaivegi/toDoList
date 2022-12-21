@@ -139,7 +139,7 @@ app.post("/", function(req, res) {
       name: buttonValue
     }, function(err, foundList) {
 
-      foundList.listItems.push(itemNext));
+      foundList.listItems.push(itemNext);
       foundList.save();
       res.redirect("/" + buttonValue);
     });
