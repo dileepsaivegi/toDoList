@@ -1,13 +1,17 @@
+
+
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const _=require("lodash");
-const url = "mongodb+srv://dileepsaivegi:Y49zRWGZUJVy3p9@cluster0.lr5g4.mongodb.net/toDoListDB?retryWrites=true&w=majority";
+
+require('dotenv').config();
+
 mongoose.set('strictQuery', true);
 app.use(express.static("public"));
 app.use(express.urlencoded({extended:true}));
 app.set("view engine", "ejs");
-mongoose.connect(url);
+mongoose.connect(process.env.ATLAS_URL);
 mongoose.connection;
 
 
@@ -78,9 +82,9 @@ app.get("/", function(req, res) {
   Item.find({},function(err, items) {
     if (items.length === 0) {
       Item.insertMany(defaultArray, function(err) {
-        if (!err) {res.redirect("/");
-        }
+        if (!err) {}
       });
+      res.redirect("/");
     }
      else {
         res.render("list", {
@@ -140,4 +144,7 @@ app.post("/delete", function(req, res) {
   app.get("/about", function(req, res){
     res.render("about");
   });
-
+app.listen(1000,function(req,res){
+    console.log("success");
+})
+  console.log("success");
